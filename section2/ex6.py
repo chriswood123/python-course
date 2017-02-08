@@ -1,10 +1,5 @@
 #!/usr/bin/env python
 
-biggest_parcel = {}
-smallest_parcel = {}
-biggest = 0
-smallest = None
-
 def update_biggest(size, destination, length, width, height):
     biggest_parcel['destination'] = destination
     biggest_parcel['length'] = length
@@ -50,28 +45,34 @@ def get_dims_from_user():
             print(e)
 
 
-while True:
-    print 'Enter a parcel'
-    destination = raw_input('Destination: ')
-    if destination == '':
-        print_biggest()
-        print_smallest()
-        break
-    try:
-        parsed_dims = get_dims_from_user()
-    except KeyboardInterrupt:
-        print('\nBad dimensions, cacelling parcel')
-        continue
-    length = int(parsed_dims[0])
-    width = int(parsed_dims[1])
-    height = int(parsed_dims[2])
-    size = length * width * height
-    if size > biggest:
-        biggest = size
-        update_biggest(size, destination, length, width, height)
-    if smallest is None or size < smallest:
-        smallest = size
+def main():
+    biggest_parcel = {}
+    smallest_parcel = {}
+    biggest = 0
+    smallest = None
+    while True:
+        print 'Enter a parcel'
+        destination = raw_input('Destination: ')
+        if destination == '':
+            print_biggest()
+            print_smallest()
+            break
+        try:
+            parsed_dims = get_dims_from_user()
+        except KeyboardInterrupt:
+            print('\nBad dimensions, cacelling parcel')
+            continue
+        length = int(parsed_dims[0])
+        width = int(parsed_dims[1])
+        height = int(parsed_dims[2])
+        size = length * width * height
+        if size > biggest:
+            biggest = size
+            update_biggest(size, destination, length, width, height)
+        if smallest is None or size < smallest:
+            smallest = size
         update_smallest(size, destination, length, width, height)
 
 
-
+if __name__ == '__main__':
+    main()
