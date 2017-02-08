@@ -27,6 +27,29 @@ def print_smallest():
     for key in smallest_parcel:
         print "%s: %s" % (key, smallest_parcel[key])
 
+
+def parse_dim_string(text):
+    elements = text.split(' ')
+    if len(elements) != 3:
+        raise ValueError("There must be three elements seperated by spaces")
+    dims = []
+    for i in elements:
+        try:
+            dims.append(int(i))
+        except ValueError:
+            raise ValueError('Could not convert text to integer "{0}"'.format(i))
+    return dims
+
+def get_dims_from_user():
+    while True:
+        try:
+            dim_string = raw_input('Dimensions (L W H): ')
+            parsed_dims = parse_dim_string(dim_string)
+            return parsed_dims
+        except ValueError as e:
+            print(e)
+
+
 while True:
     print 'Enter a parcel'
     destination = raw_input('Destination: ')
@@ -34,10 +57,14 @@ while True:
         print_biggest()
         print_smallest()
         break
-    dimensions = raw_input('Dimensions (L W H): ')
-    length = int(dimensions.split(' ')[0])
-    width = int(dimensions.split(' ')[1])
-    height = int(dimensions.split(' ')[2])
+    try:
+        parsed_dims = get_dims_from_user()
+    except KeyboardInterrupt:
+        print('\nBad dimensions, cacelling parcel')
+        continue
+    length = int(parsed_dims[0])
+    width = int(parsed_dims[1])
+    height = int(parsed_dims[2])
     size = length * width * height
     if size > biggest:
         biggest = size
