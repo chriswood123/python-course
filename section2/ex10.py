@@ -11,7 +11,7 @@ def is_reposnse_yes(response):
     else:
         return False
 
-def generate_reposnse_hash(values):
+def generate_reposnse_list(values):
     respondents = {}
     columns = []
     row_count = 1
@@ -27,10 +27,11 @@ def generate_reposnse_hash(values):
             if column == 'email':
                 respondents[row[column_count]] = row
             column_count = column_count + 1
-    # Turn hash with lists of responses as the value in to
-    # hash with hashes of responses as value
+    return (respondents, columns)
+
+def generate_reposnse_dict(response_list, columns):
     respondents_hashed = {}
-    for k, v in respondents.iteritems():
+    for k, v in response_list.iteritems():
         stripped_key = k.strip(' ')
         respondents_hashed[stripped_key] = {}
         col_count = len(columns) - 1
@@ -41,21 +42,29 @@ def generate_reposnse_hash(values):
             col_count = col_count - 1
     return respondents_hashed
 
-surveys = []
-for arg in sys.argv:
-    if arg != sys.argv[0]:
-        values = []
-        with open(arg, 'r') as f:
-            lines = csv.reader(f)
-            for line in lines:
-                values.append(line)
-        surveys.append(generate_reposnse_hash(values))
+def combine_surveys(surveys):
+    combined_survey = {}
+    for survey in surveys:
+        for key, value in survey.iteritems():
+            combined_survey[key] = value
+    return combined_survey
 
-# TODO: Join the muliple surveys, removing dupes, etc.
-responses = surveys[1]
+surveys = []
+for arg in sys.argv[1:]:
+    sys.argv[1:]
+    values = []
+    with open(arg, 'r') as f:
+        lines = csv.reader(f)
+        for line in lines:
+            values.append(line)
+    response_list, columns = generate_reposnse_list(values)
+    response_dict = generate_reposnse_dict(response_list, columns)
+    surveys.append(response_dict)
+
+combined_survey = combine_surveys(surveys)
 live_in_scotland = 0
 yes_to_q2 = 0
-for k, v in responses.iteritems():
+for k, v in combined_survey.iteritems():
     #print "%s: %s" % (k, v)
     if v['country'] == 'scotland':
         live_in_scotland = live_in_scotland + 1
